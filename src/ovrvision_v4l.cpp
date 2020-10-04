@@ -12,7 +12,8 @@
 // Oculus Rift : TM & Copyright Oculus VR, Inc. All Rights Reserved
 // Unity : TM & Copyright Unity Technologies. All Rights Reserved
 
-// Linux only
+#include "ovrvision_v4l.h"
+
 #ifdef LINUX
 
 #include <stdio.h>
@@ -27,8 +28,6 @@
 #include <sys/mman.h>
 #include <sys/ioctl.h>
 #include <dirent.h>
-
-#include "ovrvision_v4l.h"
 
 #define OVRVISIONPRO	"OvrvisionPro"
 #define USE_MMAP

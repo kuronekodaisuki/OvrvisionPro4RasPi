@@ -28,83 +28,84 @@
 typedef cv::Mat ovMat;
 
 //OVR Group
-namespace OVR {
-
-//for system
-class OvrvisionPro;
-
-//Left or Right camera.
-#ifndef _OV_CAMEYE_ENUM_
-#define _OV_CAMEYE_ENUM_
-	typedef enum ov_cameraeye {
-		OV_CAMEYE_LEFT = 0,		//Left camera
-		OV_CAMEYE_RIGHT,		//Right camera
-		OV_CAMNUM,
-	} Cameye;
-#endif
-
-//WriteEEPROM flag
-#define WRITE_EEPROM_FLAG_LENSPARAMWR	(0x00000001)
-#define WRITE_EEPROM_FLAG_CAMERASETWR	(0x00000002)
-#define WRITE_EEPROM_FLAG_ALLWR			(0x00000003)
-
-//Version
-#define EEPROM_SYSTEM_VERSION	(0x01)
-
-/////////// CLASS ///////////
-
-class OvrvisionSetting
+namespace OVR 
 {
-public:
-	//Constructor
-	OvrvisionSetting(OvrvisionPro* system_ptr);
 
-	//Methods
-	//Read Setting
-	bool ReadEEPROM();
-	//Write Setting
-	bool WriteEEPROM(unsigned char flag);
+	//for system
+	class OvrvisionPro;
 
-	//Reset Setting
-	bool ResetEEPROM();
+	//Left or Right camera.
+	#ifndef _OV_CAMEYE_ENUM_
+	#define _OV_CAMEYE_ENUM_
+		typedef enum ov_cameraeye {
+			OV_CAMEYE_LEFT = 0,		//Left camera
+			OV_CAMEYE_RIGHT,		//Right camera
+			OV_CAMNUM,
+		} Cameye;
+	#endif
 
-	// Calculate Undistortion Matrix
-	void GetUndistortionMatrix(Cameye eye, ovMat &mapX, ovMat &mapY, int width, int height);
+	//WriteEEPROM flag
+	#define WRITE_EEPROM_FLAG_LENSPARAMWR	(0x00000001)
+	#define WRITE_EEPROM_FLAG_CAMERASETWR	(0x00000002)
+	#define WRITE_EEPROM_FLAG_ALLWR			(0x00000003)
 
-	//Initialize Data
-	void InitValue();
+	//Version
+	#define EEPROM_SYSTEM_VERSION	(0x01)
 
-	//Var
-	//OK
-	bool isReaded;
+	/////////// CLASS ///////////
 
-	//Camera Setting
-	int	m_propExposure;			//Exposure
-	int	m_propGain;				//Gain
-	int	m_propBLC;				//BLC
-	int m_propWhiteBalanceR;	//WhiteBaranceR
-	int	m_propWhiteBalanceG;	//WhiteBaranceG
-	int	m_propWhiteBalanceB;	//WhiteBaranceB
+	class OvrvisionSetting
+	{
+	public:
+		//Constructor
+		OvrvisionSetting(OvrvisionPro* system_ptr);
 
-	char m_propWhiteBalanceAuto;
+		//Methods
+		//Read Setting
+		bool ReadEEPROM();
+		//Write Setting
+		bool WriteEEPROM(unsigned char flag);
 
-	//UndistortSetting : External variable
-	cv::Size m_pixelSize;
-	ovMat	m_leftCameraInstric;
-	ovMat	m_rightCameraInstric;
-	ovMat	m_leftCameraDistortion;
-	ovMat	m_rightCameraDistortion;
-	ovMat	m_R1;
-	ovMat	m_R2;
-	ovMat	m_trans;
-	ovMat	m_focalPoint;
+		//Reset Setting
+		bool ResetEEPROM();
 
-	cv::Rect m_leftROI;
-	cv::Rect m_rightROI;
+		// Calculate Undistortion Matrix
+		void GetUndistortionMatrix(Cameye eye, ovMat &mapX, ovMat &mapY, int width, int height);
 
-	//system
-	OvrvisionPro*	m_pSystem;
-};
+		//Initialize Data
+		void InitValue();
+
+		//Var
+		//OK
+		bool isReaded;
+
+		//Camera Setting
+		int	m_propExposure;			//Exposure
+		int	m_propGain;				//Gain
+		int	m_propBLC;				//BLC
+		int m_propWhiteBalanceR;	//WhiteBaranceR
+		int	m_propWhiteBalanceG;	//WhiteBaranceG
+		int	m_propWhiteBalanceB;	//WhiteBaranceB
+
+		char m_propWhiteBalanceAuto;
+
+		//UndistortSetting : External variable
+		cv::Size m_pixelSize;
+		ovMat	m_leftCameraInstric;
+		ovMat	m_rightCameraInstric;
+		ovMat	m_leftCameraDistortion;
+		ovMat	m_rightCameraDistortion;
+		ovMat	m_R1;
+		ovMat	m_R2;
+		ovMat	m_trans;
+		ovMat	m_focalPoint;
+
+		cv::Rect m_leftROI;
+		cv::Rect m_rightROI;
+
+		//system
+		OvrvisionPro*	m_pSystem;
+	};
 
 };
 

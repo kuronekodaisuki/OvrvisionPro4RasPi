@@ -12,6 +12,7 @@
 // Oculus Rift : TM & Copyright Oculus VR, Inc. All Rights Reserved
 // Unity : TM & Copyright Unity Technologies. All Rights Reserved
 
+#define LINUX
 //Linux only
 #ifdef LINUX
 
@@ -31,103 +32,102 @@
 //Group
 namespace OVR
 {
-/////////// VARS AND DEFS ///////////
+	/////////// VARS AND DEFS ///////////
 
-//Function status
-#define RESULT_OK		(0)
-#define RESULT_FAILED	(1)
+	//Function status
+	#define RESULT_OK		(0)
+	#define RESULT_FAILED	(1)
 
-//RGB color data pixel byte
-#define OV_RGB_COLOR	(3)
+	//RGB color data pixel byte
+	#define OV_RGB_COLOR	(3)
 
-//Device name buffer size
-#define OV_DEVICENAMENUM	(256)
+	//Device name buffer size
+	#define OV_DEVICENAMENUM	(256)
 
-//ID
-typedef unsigned short usb_id;
+	//ID
+	typedef unsigned short usb_id;
 
-//Device Status
-typedef enum ov_devstatus {
-	OV_DEVNONE = 0,
-	OV_DEVCREATTING,
-	OV_DEVSTOP,
-	OV_DEVRUNNING,
-} DevStatus;
+	//Device Status
+	typedef enum ov_devstatus {
+		OV_DEVNONE = 0,
+		OV_DEVCREATTING,
+		OV_DEVSTOP,
+		OV_DEVRUNNING,
+	} DevStatus;
 
-//Camera Setting enum
-typedef enum ov_camseet {
-	OV_CAMSET_EXPOSURE = 0,		//Exposure
-	OV_CAMSET_GAIN,				//Gain
-	OV_CAMSET_WHITEBALANCER,	//Saturation
-	OV_CAMSET_WHITEBALANCEG,	//Brightness
-	OV_CAMSET_WHITEBALANCEB,	//Sharpness
-	OV_CAMSET_BLC,				//Backlight Compensation
-	OV_CAMSET_DATA,				//EEPROM Data Access
-} CamSetting;
+	//Camera Setting enum
+	typedef enum ov_camseet {
+		OV_CAMSET_EXPOSURE = 0,		//Exposure
+		OV_CAMSET_GAIN,				//Gain
+		OV_CAMSET_WHITEBALANCER,	//Saturation
+		OV_CAMSET_WHITEBALANCEG,	//Brightness
+		OV_CAMSET_WHITEBALANCEB,	//Sharpness
+		OV_CAMSET_BLC,				//Backlight Compensation
+		OV_CAMSET_DATA,				//EEPROM Data Access
+	} CamSetting;
 
-typedef struct {
-	void *start;
-	size_t length;
-} V4L_BUFFER;
+	typedef struct {
+		void *start;
+		size_t length;
+	} V4L_BUFFER;
 
-/////////// CLASS ///////////
-//class
-class OvrvisionVideo4Linux
-{
-public:
-	//Constructor/Destructor
-	OvrvisionVideo4Linux();
-	~OvrvisionVideo4Linux();
+	/////////// CLASS ///////////
+	//class
+	class OvrvisionVideo4Linux
+	{
+	public:
+		//Constructor/Destructor
+		OvrvisionVideo4Linux();
+		~OvrvisionVideo4Linux();
 
-	//Open device
-	int OpenDevice(int num, int width, int height, int frame_rate);
+		//Open device
+		int OpenDevice(int num, int width, int height, int frame_rate);
 
-	//Delete device
-	int DeleteDevice();
+		//Delete device
+		int DeleteDevice();
 
-	//Transfer status
-	int StartTransfer();
-	int StopTransfer();
+		//Transfer status
+		int StartTransfer();
+		int StopTransfer();
 
-	//Get pixel data
-	//In non blocking, when data cannot be acquired, RESULT_FAILED returns. 
-	int GetBayer16Image(unsigned char* pimage, bool nonblocking = false);
-	int GetBayer16Image(unsigned char* pimage, size_t step, bool nonblocking = false);
+		//Get pixel data
+		//In non blocking, when data cannot be acquired, RESULT_FAILED returns. 
+		int GetBayer16Image(unsigned char* pimage, bool nonblocking = false);
+		int GetBayer16Image(unsigned char* pimage, size_t step, bool nonblocking = false);
 
-	//Set camera setting
-	int SetCameraSetting(CamSetting proc, int value, bool automode);
-	//Get camera setting
-	int GetCameraSetting(CamSetting proc, int* value, bool* automode);
+		//Set camera setting
+		int SetCameraSetting(CamSetting proc, int value, bool automode);
+		//Get camera setting
+		int GetCameraSetting(CamSetting proc, int* value, bool* automode);
 
-	/*! @brief Check capability */
-	int CheckCapability();
+		/*! @brief Check capability */
+		int CheckCapability();
 
-	/*! @brief Query capability of device */
-	void QueryCapability();
+		/*! @brief Query capability of device */
+		void QueryCapability();
 
-	void EnumFormats();
+		void EnumFormats();
 
-	//Callback
-	void SetCallback(void(*func)());
+		//Callback
+		void SetCallback(void(*func)());
 
-protected:
-	int SearchDevice(const char *name);
-	int Init();
+	protected:
+		int SearchDevice(const char *name);
+		int Init();
 
-private:
-	char _device_name[16];
-	int	_fd;
-	unsigned int	_n_buffers;
-	V4L_BUFFER *_buffers;
-	int _width;
-	int _height;
-	bool _cropVertical;
-	bool _cropHorizontal;
-	struct v4l2_format _format;
+	private:
+		char _device_name[16];
+		int	_fd;
+		unsigned int	_n_buffers;
+		V4L_BUFFER *_buffers;
+		int _width;
+		int _height;
+		bool _cropVertical;
+		bool _cropHorizontal;
+		struct v4l2_format _format;
 
-	void(*m_get_callback)(void);
-};
-
+		void(*m_get_callback)(void);
+	};
 }; // namespave OVR
 
 #endif // __OVRVISION_V4L__
