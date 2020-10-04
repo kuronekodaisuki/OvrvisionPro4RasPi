@@ -36,7 +36,7 @@
 
 typedef struct {
 	unsigned int flag;
-	char *name;
+	const char *name;
 } V4L2_CAPABILITY_MAP;
 
 
@@ -446,7 +446,7 @@ namespace OVR
 		{
 			if (strncmp(entry->d_name, "video", 5) == 0)
 			{
-				char path[256];
+				char path[PATH_MAX];
 				sprintf(path, "/dev/%s", entry->d_name);
 				int fd = open(path, O_RDWR | O_NONBLOCK, 0);
 				struct v4l2_capability cap;

@@ -18,23 +18,7 @@
 
 /////////// INCLUDE ///////////
 
-//Pratform header
-#ifdef WIN32
-#ifndef _WIN32_WINNT
-#define _WIN32_WINNT 0x400
-#endif
-#include <windows.h>
-
-#endif /*WIN32*/
-
-#ifdef MACOSX
-
-#endif	/*MACOSX*/
-	
-#ifdef LINUX
-
-#endif	/*LINUX*/
-
+#define LINUX
 //Common header
 #include <stdlib.h>
 #include <stdio.h>
