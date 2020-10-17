@@ -1,5 +1,7 @@
-#include <opencv2/opencv.hpp>
-#include "ovrvision_v4l.h"
+#include <opencv2/core.hpp>
+#include <opencv2/highgui.hpp>
+
+#include "ovrvision_ds.h"
 
 using namespace OVR;
 using namespace cv;

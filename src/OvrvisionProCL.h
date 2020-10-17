@@ -34,15 +34,16 @@
 
 #define CL_TARGET_OPENCL_VERSION 120
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS // We use OpenCL 1.2 functions
+
 #ifdef WIN32
-// OpenCL header
-#include <CL/opencl.h>			// OpenCL and its extensions
-#include <CL/cl_d3d11.h>		// for OpenCL and Direct3D11 interoperability (KHR)
-#include <CL/cl_d3d11_nvidia.h>	// for OpenCL and Direct3D11 interoperability (NV)
 #include <windows.h>
 #include <dxgi.h>
 #include <d3d11.h>
 #include <GL/gl.h> 
+// OpenCL header
+#include <CL/opencl.h>			// OpenCL and its extensions
+#include <CL/cl_d3d11.h>		// for OpenCL and Direct3D11 interoperability (KHR)
+#include <CL/cl_d3d11_nvidia.h>	// for OpenCL and Direct3D11 interoperability (NV)
 typedef void *TEXTURE;
 #endif
 
