@@ -72,8 +72,11 @@ namespace OVR
 
 		if (m_pSystem == NULL)
 			return false;
-
+#if CV_MAJOR_VERSION == 4
+		cv::FileStorage cvfs(".\\ovrvisionpro_conf.xml", cv::FileStorage::READ | cv::FileStorage::FORMAT_XML);
+#else
 		cv::FileStorage cvfs(".\\ovrvisionpro_conf.xml", CV_STORAGE_READ | CV_STORAGE_FORMAT_XML);
+#endif // CV_MAJOR_VERSION == 4
 
 		if (!cvfs.isOpened())
 		{
@@ -181,8 +184,11 @@ namespace OVR
 			int mode = 0;
 
 			//get data node
+#if CV_MAJOR_VERSION == 4
+			cv::FileNode data(cvfs.root());
+#else
 			cv::FileNode data(cvfs.fs, NULL);
-
+#endif
 			mode = data["Mode"];
 
 			//read camera setting

@@ -20,6 +20,10 @@
 
 #include "ovrvision_setting.h"
 
+#ifdef WIN32
+#include "ovrvision_ds.h"
+#endif // WIN32
+
 /////////// VARS AND DEFS ///////////
 
 //OVRVISION USB SETTING

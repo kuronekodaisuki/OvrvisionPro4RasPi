@@ -117,6 +117,7 @@ namespace OVR
 
 	private:
 		char _device_name[16];
+
 		int	_fd;
 		unsigned int	_n_buffers;
 		V4L_BUFFER *_buffers;
