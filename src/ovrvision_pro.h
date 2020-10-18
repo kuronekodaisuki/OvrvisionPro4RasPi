@@ -73,8 +73,8 @@ namespace OVR {
 //! @enum ov_cameraeye
 //! Eye selection the Left or Right.
 typedef enum ov_cameraeye {
-	OV_CAMEYE_LEFT = 0,		//!Left camera
-	OV_CAMEYE_RIGHT,		//!Right camera
+	OV_CAMEYE_LEFT = 0,	//!Left camera
+	OV_CAMEYE_RIGHT,	//!Right camera
 	OV_CAMNUM,
 } Cameye;
 #endif
@@ -82,30 +82,30 @@ typedef enum ov_cameraeye {
 //! @enum ov_cameraprop
 //! Camera open types
 typedef enum ov_cameraprop {
-	OV_CAM5MP_FULL = 0,		//!2560x1920 @15fps x2
-	OV_CAM5MP_FHD,			//!1920x1080 @30fps x2
-	OV_CAMHD_FULL,			//!1280x960  @45fps x2
-	OV_CAMVR_FULL, 			//!960x950   @60fps x2
-	OV_CAMVR_WIDE,			//!1280x800  @60fps x2
-	OV_CAMVR_VGA,			//!640x480   @90fps x2
-	OV_CAMVR_QVGA,			//!320x240   @120fps x2
-	OV_CAM20HD_FULL,		//!1280x960  @15fps x2 Only USB2.0 connection
-	OV_CAM20VR_VGA,			//!640x480   @30fps x2 Only USB2.0 connection
+	OV_CAM5MP_FULL = 0,	//!2560x1920 @15fps x2
+	OV_CAM5MP_FHD,		//!1920x1080 @30fps x2
+	OV_CAMHD_FULL,		//!1280x960  @45fps x2
+	OV_CAMVR_FULL, 		//!960x950   @60fps x2
+	OV_CAMVR_WIDE,		//!1280x800  @60fps x2
+	OV_CAMVR_VGA,		//!640x480   @90fps x2
+	OV_CAMVR_QVGA,		//!320x240   @120fps x2
+	OV_CAM20HD_FULL,	//!1280x960  @15fps x2 Only USB2.0 connection
+	OV_CAM20VR_VGA,		//!640x480   @30fps x2 Only USB2.0 connection
 } Camprop;
 
 //! @enum ov_cameraquality
 //! The image-processing method 
 typedef enum ov_cameraquality {
 	OV_CAMQT_DMSRMP = 0,	//!Demosaic & Remap
-	OV_CAMQT_DMS,			//!Demosaic
-	OV_CAMQT_NONE,			//!None
+	OV_CAMQT_DMS,		//!Demosaic
+	OV_CAMQT_NONE,		//!None
 } Camqt;
 
 //! ROI
 typedef struct {
-	int offsetX;			//!OffsetX
-	int offsetY;			//!OffsetY
-	unsigned int width;		//!Width
+	int offsetX;		//!OffsetX
+	int offsetY;		//!OffsetY
+	unsigned int width;	//!Width
 	unsigned int height;	//!Height
 } ROI;
 
@@ -134,7 +134,7 @@ public:
 		@param locationID Connection number
 		@param prop Camera property
 		@param pVendorName c style string with the vendor name ("NVIDIA Corporation", "Intel(R) Corporation", )
-        @param deviceType (2:D3D11, 0:OpenGL, -1:Dont share)
+        	@param deviceType (2:D3D11, 0:OpenGL, -1:Dont share)
 		@param pD3D11Device ptr to D3D11 device when deviceType == 2
 		@return If successful, the return value is 0< */
 	int Open(int locationID, OVR::Camprop prop, const char *pVendorName = NULL, int deviceType = -1, void *pD3D11Device = NULL);
@@ -286,12 +286,12 @@ public:
 		OVR::ROI size = ovrvision.SetSkinScale(2); 
 
 		D3D11_TEXTURE2D_DESC desc = {
-			size.width,					// Width
-			size.height,				// Height
-			1,							// MipLevels
-			1,							// ArraySize
+			size.width,			// Width
+			size.height,			// Height
+			1,				// MipLevels
+			1,				// ArraySize
 			DXGI_FORMAT_R8G8B8A8_UINT,	// Format, BE CAREFUL
-			{ 1 },						// SampleDesc.Count
+			{ 1 },				// SampleDesc.Count
 			D3D11_USAGE_DEFAULT,		// Usage
 		};
 
@@ -412,9 +412,9 @@ private:
 	byte*			m_pPixels[OV_CAMNUM];
 
 	//Camera status data
-	int				m_width;
-	int				m_height;
-	int				m_framerate;
+	int			m_width;
+	int			m_height;
+	int			m_framerate;
 	float			m_focalpoint;
 	float			m_rightgap[3];	//vector3
 	float			m_expo_f;

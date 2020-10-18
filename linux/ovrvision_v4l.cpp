@@ -62,7 +62,7 @@ namespace OVR
 	{
 	}
 
-	int OvrvisionVideo4Linux::OpenDevice(int num, int width, int height, int frame_rate)
+	int OvrvisionVideo4Linux::OpenDevice(int width, int height, int frame_rate)
 	{
 		if (SearchDevice(OVRVISIONPRO) != 0)
 			return -1;
@@ -76,7 +76,7 @@ namespace OVR
 	}
 
 	//Delete device
-	int OvrvisionVideo4Linux::DeleteDevice()
+	int OvrvisionVideo4Linux::CloseDevice()
 	{
 #ifdef USE_MMAP
 		for(uint i = 0; i < _n_buffers; ++i)
@@ -357,7 +357,7 @@ namespace OVR
 
 		if (-1 == xioctl(_fd, VIDIOC_REQBUFS, &req)) {
 			if (EINVAL == errno) {
-				fprintf(stderr, "%s does not support memory mapping\n", _device_name);
+				fprintf(stderr, "%s does not support memory mapping\n", _deviceName);
 				//exit(EXIT_FAILURE);
 			} else {
 				//errno_exit("VIDIOC_REQBUFS");
@@ -365,7 +365,7 @@ namespace OVR
 		}
 
 		if (req.count < 2) {
-			fprintf(stderr, "Insufficient buffer memory on %s\n", _device_name);
+			fprintf(stderr, "Insufficient buffer memory on %s\n", _deviceName);
 			//exit(EXIT_FAILURE);
 		}
 

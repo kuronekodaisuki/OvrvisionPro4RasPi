@@ -29,42 +29,14 @@
 #include <linux/v4l2-mediabus.h>
 #include <linux/v4l2-subdev.h>
 
+#include "../src/ovrvision_device.h"
+
 //Group
 namespace OVR
 {
 	/////////// VARS AND DEFS ///////////
-
-	//Function status
-	#define RESULT_OK		(0)
-	#define RESULT_FAILED	(1)
-
-	//RGB color data pixel byte
-	#define OV_RGB_COLOR	(3)
-
-	//Device name buffer size
-	#define OV_DEVICENAMENUM	(256)
-
 	//ID
 	typedef unsigned short usb_id;
-
-	//Device Status
-	typedef enum ov_devstatus {
-		OV_DEVNONE = 0,
-		OV_DEVCREATTING,
-		OV_DEVSTOP,
-		OV_DEVRUNNING,
-	} DevStatus;
-
-	//Camera Setting enum
-	typedef enum ov_camseet {
-		OV_CAMSET_EXPOSURE = 0,		//Exposure
-		OV_CAMSET_GAIN,				//Gain
-		OV_CAMSET_WHITEBALANCER,	//Saturation
-		OV_CAMSET_WHITEBALANCEG,	//Brightness
-		OV_CAMSET_WHITEBALANCEB,	//Sharpness
-		OV_CAMSET_BLC,				//Backlight Compensation
-		OV_CAMSET_DATA,				//EEPROM Data Access
-	} CamSetting;
 
 	typedef struct {
 		void *start;
@@ -73,7 +45,7 @@ namespace OVR
 
 	/////////// CLASS ///////////
 	//class
-	class OvrvisionVideo4Linux
+	class OvrvisionVideo4Linux: public OvrvisionDevice
 	{
 	public:
 		//Constructor/Destructor
@@ -81,10 +53,10 @@ namespace OVR
 		~OvrvisionVideo4Linux();
 
 		//Open device
-		int OpenDevice(int num, int width, int height, int frame_rate);
+		int OpenDevice(int width, int height, int frame_rate);
 
 		//Delete device
-		int DeleteDevice();
+		int CloseDevice();
 
 		//Transfer status
 		int StartTransfer();
@@ -116,13 +88,9 @@ namespace OVR
 		int Init();
 
 	private:
-		char _device_name[16];
-
 		int	_fd;
 		unsigned int	_n_buffers;
 		V4L_BUFFER *_buffers;
-		int _width;
-		int _height;
 		bool _cropVertical;
 		bool _cropHorizontal;
 		struct v4l2_format _format;

@@ -40,7 +40,7 @@
 //for threading
 #include <process.h>
 
-#include "ovrvision_device.h"
+#include "../src/ovrvision_device.h"
 
 //OVR Group
 namespace OVR {
