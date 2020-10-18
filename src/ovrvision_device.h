@@ -61,7 +61,7 @@ namespace OVR
 		virtual int OpenDevice(int width, int height, int fps) = 0;
 
 		// Close device
-		virtual void CloseDevice() = 0;
+		virtual int CloseDevice() = 0;
 
 		//Transfer status
 		virtual int StartTransfer() = 0;
