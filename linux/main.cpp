@@ -1,7 +1,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/highgui.hpp>
 
-#include "ovrvision_ds.h"
+#include "ovrvision_v4l.h"
 
 using namespace OVR;
 using namespace cv;
@@ -12,11 +12,11 @@ using namespace cv;
 int main(int argc, char *argv[])
 {
 	Mat image(HEIGHT, WIDTH, CV_16UC1);
-	OvrvisionDirectShow device;
-	device.OpenDevice(WIDTH, HEIGHT, 30, 0);
+	OvrvisionVideo4Linux device;
+	device.OpenDevice(WIDTH, HEIGHT, 30);
 	//device.QueryCapability();
 	//device.EnumFormats();
-	//device.StartTransfer();
+	device.StartTransfer();
 	for (bool loop = true; loop;)
 	{
 		if (0 == device.GetBayer16Image(image.data))
