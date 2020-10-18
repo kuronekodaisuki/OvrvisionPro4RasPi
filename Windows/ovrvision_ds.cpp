@@ -179,13 +179,8 @@ OvrvisionDirectShow::OvrvisionDirectShow()
 	else m_comInit = false;
 
 	//Var init
-	m_devstatus = OVR::OV_DEVNONE;
-	m_width = 0;
-	m_height = 0;
-	m_rate = 0;
-	m_latestPixelDataSize = 0;
-	m_maxPixelDataSize = 0;
-	memset(&m_nDeviceName, 0x00, sizeof(m_nDeviceName));
+	_devstatus = OVR::OV_DEVNONE;
+	memset(&_deviceName, 0x00, sizeof(_deviceName));
 
 	//Var null
 	m_pGraph = NULL;

@@ -58,10 +58,10 @@ namespace OVR
 	{
 	public:
 		// Open device
-		virtual int Open(int width, int height, int fps) = 0;
+		virtual int OpenDevice(int width, int height, int fps) = 0;
 
 		// Close device
-		virtual void Close() = 0;
+		virtual void CloseDevice() = 0;
 
 		//Transfer status
 		virtual int StartTransfer() = 0;
@@ -80,16 +80,17 @@ namespace OVR
 		virtual void SetCallback(void(*func)()) = 0;
 
 	protected:
-		//Device status
-		DevStatus		m_devstatus;
-		char m_nDeviceName[OV_DEVICENAMENUM];
+		char _deviceName[OV_DEVICENAMENUM];
 
 		//Pixel Size
-		int				m_width;
-		int				m_height;
-		int				m_rate;
-		int				m_latestPixelDataSize;
-		int				m_maxPixelDataSize;
+		int	_width;
+		int	_height;
+		int	_fps;
+		int	_latestPixelDataSize;
+		int	_maxPixelDataSize;
+
+		//Device status
+		DevStatus	_devstatus;
 	};
 }
 

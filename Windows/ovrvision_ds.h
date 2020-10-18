@@ -40,7 +40,7 @@
 //for threading
 #include <process.h>
 
-#include "ovrvision_device.h"
+#include "../src/ovrvision_device.h"
 
 //OVR Group
 namespace OVR {
@@ -87,17 +87,6 @@ public:
 	void SetCallback(void(*func)());
 
 private:
-	//Device status
-	DevStatus		m_devstatus;
-	char			m_nDeviceName[OV_DEVICENAMENUM];
-
-	//Pixel Size
-	int				m_width;
-	int				m_height;
-	int				m_rate;
-	int				m_latestPixelDataSize;
-	int				m_maxPixelDataSize;
-
 	bool			m_comInit;
 	
 	//Windows DirectShow
