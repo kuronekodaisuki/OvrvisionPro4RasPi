@@ -58,7 +58,7 @@ namespace OVR
 	{
 	public:
 		// Open device
-		virtual int OpenDevice(int width, int height, int fps) = 0;
+		virtual int OpenDevice(int width, int height, int fps, int id) = 0;
 
 		// Close device
 		virtual int CloseDevice() = 0;

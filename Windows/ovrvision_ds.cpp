@@ -269,14 +269,14 @@ IBaseFilter* OvrvisionDirectShow::GetSrcFilterFromID(ICreateDevEnum* pDev,
 					if (SUCCEEDED(pPropBag->Read(L"DevicePath", &varName, 0)))
 					{
 						int count = 0;
-						memset(&m_nDeviceName, 0x00, sizeof(m_nDeviceName));
+						memset(&_deviceName, 0x00, sizeof(_deviceName));
 						while (varName.bstrVal[count] != 0x00 && count < OV_DEVICENAMENUM) {
-							m_nDeviceName[count] = (char)varName.bstrVal[count];
+							_deviceName[count] = (char)varName.bstrVal[count];
 							count++;
 						}
 
 						//id cmp
-						if (UsbidCmp(m_nDeviceName, vid, pid) == RESULT_OK) {
+						if (UsbidCmp(_deviceName, vid, pid) == RESULT_OK) {
 							if (skip <= 0) {
 								pMoniker->BindToObject(NULL, NULL, IID_IBaseFilter, (void**)&filter);
 							}
@@ -357,25 +357,25 @@ int OvrvisionDirectShow::OpenDevice(int width, int height, int fps, int skip)
 	ICreateDevEnum *pDevEnum = NULL;
 	IMediaFilter *pMediaFilter = 0;
 	
-	if(m_devstatus != OV_DEVNONE) {
+	if(_devstatus != OV_DEVNONE) {
 		//Has already been created
 		return RESULT_FAILED;
 	}
-	m_devstatus = OV_DEVCREATTING;
+	_devstatus = OV_DEVCREATTING;
 
 	// Create the System Device Enumerator.
 	hr = CoCreateInstance(CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER,
 		IID_ICreateDevEnum, (void **)&pDevEnum);
 
 	if(FAILED(hr)) {
-		m_devstatus = OV_DEVNONE;
+		_devstatus = OV_DEVNONE;
 		return RESULT_FAILED;		//ERROR
 	}
 
 	//-------- Create graphs --------
 
 	//Get SrcFilter
-	m_pSrcFilter = GetSrcFilterFromID(pDevEnum,OV_USB_VENDERID,OV_USB_PRODUCTID,skip);
+	m_pSrcFilter = GetSrcFilterFromID(pDevEnum, OV_USB_VENDERID, OV_USB_PRODUCTID, skip);
 	pDevEnum->Release();
 
 	if(m_pSrcFilter == NULL) {
@@ -505,9 +505,9 @@ int OvrvisionDirectShow::OpenDevice(int width, int height, int fps, int skip)
 				if(pVih->bmiHeader.biWidth == width && pVih->bmiHeader.biHeight == height
 					 && pmt->subtype == MEDIASUBTYPE_YUY2 && framerate == fps){
 					hr = pAMSConfig->SetFormat(pmt);
-					m_width = pVih->bmiHeader.biWidth;
-					m_height = pVih->bmiHeader.biHeight;
-					m_rate = (int)framerate;
+					_width = pVih->bmiHeader.biWidth;
+					_height = pVih->bmiHeader.biHeight;
+					_fps = (int)framerate;
 
 					iFormatSel = iFormat;	//selected
 				}
@@ -524,22 +524,22 @@ int OvrvisionDirectShow::OpenDevice(int width, int height, int fps, int skip)
 	}
 
 	if (iFormatSel == -1) {
-		m_devstatus = OV_DEVNONE;
+		_devstatus = OV_DEVNONE;
 		return RESULT_FAILED;		//ERROR
 	}
 
 	//Data area allocation
-	m_latestPixelDataSize = m_maxPixelDataSize = m_width*m_height*OV_RGB_COLOR;
+	_latestPixelDataSize = _maxPixelDataSize = _width * _height*OV_RGB_COLOR;
 	
 	//Device running
-	m_devstatus = OV_DEVSTOP;
+	_devstatus = OV_DEVSTOP;
 	return RESULT_OK;
 }
 
 // Stop device
 int OvrvisionDirectShow::CloseDevice()
 {
-	if(m_devstatus == OV_DEVNONE) {
+	if(_devstatus == OV_DEVNONE) {
 		// Can't delete
 		return RESULT_FAILED;
 	}
@@ -561,22 +561,22 @@ int OvrvisionDirectShow::CloseDevice()
 	SAFE_RELEASE(&m_pAMVideoProcAmp);
 	SAFE_RELEASE(&m_pIAMCameraControl);
 
-	m_width = 0;
-	m_height = 0;
-	m_rate = 0;
-	m_latestPixelDataSize = 0;
-	m_maxPixelDataSize = 0;
-	memset(&m_nDeviceName, 0x00, sizeof(m_nDeviceName));
+	_width = 0;
+	_height = 0;
+	_fps = 0;
+	_latestPixelDataSize = 0;
+	_maxPixelDataSize = 0;
+	memset(&_deviceName, 0x00, sizeof(_deviceName));
 
 	//None
-	m_devstatus = OV_DEVNONE;
+	_devstatus = OV_DEVNONE;
 	return RESULT_OK;
 }
 
 //TransferStatus
 int OvrvisionDirectShow::StartTransfer()
 {
-	if(m_devstatus != OV_DEVSTOP) {
+	if(_devstatus != OV_DEVSTOP) {
 		// Can't delete
 		return RESULT_FAILED;
 	}
@@ -587,13 +587,13 @@ int OvrvisionDirectShow::StartTransfer()
 
 	Sleep(20); //wait 20ms
 
-	m_devstatus = OV_DEVRUNNING;
+	_devstatus = OV_DEVRUNNING;
 	return RESULT_OK;
 }
 
 int OvrvisionDirectShow::StopTransfer()
 {
-	if(m_devstatus != OV_DEVRUNNING) {
+	if(_devstatus != OV_DEVRUNNING) {
 		// Can't delete
 		return RESULT_FAILED;
 	}
@@ -606,7 +606,7 @@ int OvrvisionDirectShow::StopTransfer()
 	while(m_pMediaControl->Stop()==S_FALSE)
 		Sleep(10);
 
-	m_devstatus = OV_DEVSTOP;
+	_devstatus = OV_DEVSTOP;
 	return 0;
 }
 
@@ -615,7 +615,7 @@ int OvrvisionDirectShow::GetBayer16Image(unsigned char* pImage, bool nonblocking
 {
 	int signalwait = OV_BLOCKTIMEOUT;
 
-	if(m_devstatus != OV_DEVRUNNING)
+	if(_devstatus != OV_DEVRUNNING)
 		return RESULT_FAILED;
 
 	if(nonblocking)
@@ -627,7 +627,7 @@ int OvrvisionDirectShow::GetBayer16Image(unsigned char* pImage, bool nonblocking
 
 	result = RESULT_FAILED;
 	if (pImage) {
-		m_latestPixelDataSize = m_pSGCallback->m_LatestBufferLength;
+		_latestPixelDataSize = m_pSGCallback->m_LatestBufferLength;
 		EnterCriticalSection(&m_pSGCallback->m_critSection);
 			memcpy(pImage, m_pSGCallback->m_pPixels, m_pSGCallback->m_LatestBufferLength);	//Data copy
 		LeaveCriticalSection(&m_pSGCallback->m_critSection);
@@ -654,7 +654,7 @@ LeaveCriticalSection(&m_pSGCallback->m_critSection);
 //Set camera setting
 int OvrvisionDirectShow::SetCameraSetting(CamSetting proc, int value, bool automode)
 {
-	if(m_devstatus != OV_DEVRUNNING)
+	if(_devstatus != OV_DEVRUNNING)
 		return RESULT_FAILED;
 
 	//Use auto mode : default : manual
@@ -691,7 +691,7 @@ int OvrvisionDirectShow::SetCameraSetting(CamSetting proc, int value, bool autom
 //Get camera setting
 int OvrvisionDirectShow::GetCameraSetting(CamSetting proc, int* value, bool* automode)
 {
-	if(m_devstatus != OV_DEVRUNNING)
+	if(_devstatus != OV_DEVRUNNING)
 		return RESULT_FAILED;
 
 	long autoflag;
@@ -732,19 +732,19 @@ int OvrvisionDirectShow::GetCameraSetting(CamSetting proc, int* value, bool* aut
 //Get status
 DevStatus OvrvisionDirectShow::GetDeviceStatus()
 {
-	return m_devstatus;
+	return _devstatus;
 }
 
 //Get lastest pixel data size
 int OvrvisionDirectShow::GetLatestPixelDataSize()
 {
-	return m_latestPixelDataSize;
+	return _latestPixelDataSize;
 }
 
 //Get pixel data max size
 int OvrvisionDirectShow::GetMaxPixelDataSize()
 {
-	return m_maxPixelDataSize;
+	return _maxPixelDataSize;
 }
 
 //Callback

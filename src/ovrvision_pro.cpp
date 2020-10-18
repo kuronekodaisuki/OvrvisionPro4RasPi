@@ -19,9 +19,10 @@
 #include <opencv2/opencv.hpp>
 
 #include "ovrvision_setting.h"
+#include "OvrvisionProCL.h"
 
 #ifdef WIN32
-#include "ovrvision_ds.h"
+#include "../Windows/ovrvision_ds.h"
 #endif // WIN32
 
 /////////// VARS AND DEFS ///////////
@@ -49,11 +50,11 @@ namespace OVR
 	OvrvisionPro::OvrvisionPro()
 	{
 	#if defined(WIN32)
-		m_pODS = new OvrvisionDirectShow();
+		m_pDevice = new OvrvisionDirectShow();
 	#elif defined(MACOSX)
-		m_pOAV = [[OvrvisionAVFoundation alloc] init];
+		m_pDevice = [[OvrvisionAVFoundation alloc] init];
 	#elif defined(LINUX)
-		m_pOV4L = new OvrvisionVideo4Linux();
+		m_pDevice = new OvrvisionVideo4Linux();
 	#endif
 
 		m_pFrame = NULL;
@@ -77,11 +78,11 @@ namespace OVR
 		Close();
 
 	#if defined(WIN32)
-		delete m_pODS;
+		delete m_pDevice;
 	#elif defined(MACOSX)
-		[m_pOAV dealloc];
+		[m_pDevice dealloc];
 	#elif defined(LINUX)
-		delete m_pOV4L;
+		delete m_pDevice;
 	#endif
 	}
 
@@ -165,11 +166,16 @@ namespace OVR
 
 		//Open
 		for(challenge = 0; challenge < OV_CHALLENGENUM; challenge++) {	//CHALLENGEN
-			if (m_pOV4L->OpenDevice(locationID, cam_width, cam_height, cam_framerate) == 0) {
+			if (m_pDevice->OpenDevice(locationID, cam_width, cam_height, cam_framerate) == 0) {
 				objs++;
 				break;
 			}
+#ifdef WIN32
+			Sleep(150);	//150ms wait
+#else
 			usleep(150000);	//150ms wait
+#endif // WIN32
+
 		}
 
 		//Error
@@ -184,15 +190,15 @@ namespace OVR
 		try {
 			if (deviceType == 1 && pDevice != NULL)
 			{
-				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, D3D11, pDevice, pVendorName); // When use D3D11 sharing texture
+				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, SHARING_MODE::D3D11, pDevice, pVendorName); // When use D3D11 sharing texture
 			}
 			else if (deviceType == 0)
 			{
-				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, OPENGL, NULL, pVendorName);    // When use OpenGL sharing texture
+				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, SHARING_MODE::OPENGL, NULL, pVendorName);    // When use OpenGL sharing texture
 			}
 			else
 			{
-				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, NONE, NULL, pVendorName);
+				m_pOpenCL = new OvrvisionProOpenCL(cam_width, cam_height, SHARING_MODE::NONE, NULL, pVendorName);
 			}
 		}
 		catch (std::exception ex)
@@ -202,7 +208,7 @@ namespace OVR
 		}
 		//Opened
 		m_isOpen = true;
-		m_pOV4L->StartTransfer();
+		m_pDevice->StartTransfer();
 
 		m_width = cam_width;
 		m_height = cam_height;
@@ -221,7 +227,7 @@ namespace OVR
 		if (!m_isOpen)
 			return;
 		
-		m_pOV4L->DeleteDevice();
+		m_pDevice->CloseDevice();
 
 		if (m_pOpenCL) {
 			delete m_pOpenCL;
@@ -267,7 +273,7 @@ namespace OVR
 		if (qt == OV_CAMQT_NONE)
 			return;
 
-		if (m_pOV4L->GetBayer16Image((uchar *)m_pFrame, !m_isCameraSync) == RESULT_OK)
+		if (m_pDevice->GetBayer16Image((uchar *)m_pFrame, !m_isCameraSync) == RESULT_OK)
 		{
 			if (qt == OV_CAMQT_DMSRMP)
 				m_pOpenCL->DemosaicRemap(m_pFrame);	//OpenCL
@@ -293,7 +299,7 @@ namespace OVR
 		if (!m_isOpen)
 			return;
 
-		if (m_pOV4L->GetBayer16Image((uchar *)m_pFrame, !m_isCameraSync) == RESULT_OK)
+		if (m_pDevice->GetBayer16Image((uchar *)m_pFrame, !m_isCameraSync) == RESULT_OK)
 		{
 			if (qt == OV_CAMQT_DMSRMP)
 				m_pOpenCL->DemosaicRemap(m_pFrame, m_pPixels[0], m_pPixels[1]);	//OpenCL
@@ -327,7 +333,7 @@ namespace OVR
 
 	void OvrvisionPro::SetCallbackImageFunction(void(*func)())
 	{
-		m_pOV4L->SetCallback(func);
+		m_pDevice->SetCallback(func);
 	}
 
 	//Private method
@@ -347,9 +353,12 @@ namespace OVR
 				SetCameraWhiteBalanceG(ovrset.m_propWhiteBalanceG);
 				SetCameraWhiteBalanceB(ovrset.m_propWhiteBalanceB);
 			}
-			
 			//50ms wait
+#ifdef WIN32
+			Sleep(50);
+#else
 			usleep(50000);
+#endif // WIN32
 
 			//calc to Pixel
 			ovrset.m_focalPoint.at<float>(0) *= ((ovrset.m_pixelSize.width / SensorSizeWidth) * SensorSizeScale);
@@ -418,7 +427,7 @@ namespace OVR
 		// Number is divided by 8
 		value -= value % 8;
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_EXPOSURE, value, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_EXPOSURE, value, false);
 	}
 	bool OvrvisionPro::SetCameraExposurePerSec(float fps){
 		if (!m_isOpen)
@@ -447,7 +456,7 @@ namespace OVR
 		if (!m_isOpen)
 			return (-1);
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_GAIN, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_GAIN, &value, &automode);
 		return value;
 	}
 
@@ -462,7 +471,7 @@ namespace OVR
 			value = 47;
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_GAIN, value, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_GAIN, value, false);
 	}
 
 	/*!	@brief Set white balance gain of the Ovrvision.
@@ -509,7 +518,7 @@ namespace OVR
 		if (!m_isOpen)
 			return (-1);
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_WHITEBALANCER, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCER, &value, &automode);
 		return value;
 	}
 	void OvrvisionPro::SetCameraWhiteBalanceR(int value){
@@ -523,7 +532,7 @@ namespace OVR
 			value = 4095;
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_WHITEBALANCER, value, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCER, value, false);
 	}
 	int OvrvisionPro::GetCameraWhiteBalanceG(){
 		int value = 0;
@@ -532,7 +541,7 @@ namespace OVR
 		if (!m_isOpen)
 			return (-1);
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_WHITEBALANCEG, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCEG, &value, &automode);
 		return value;
 	}
 	void OvrvisionPro::SetCameraWhiteBalanceG(int value){
@@ -546,7 +555,7 @@ namespace OVR
 			value = 4095;
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_WHITEBALANCEG, value, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCEG, value, false);
 	}
 	int OvrvisionPro::GetCameraWhiteBalanceB(){
 		int value = 0;
@@ -555,7 +564,7 @@ namespace OVR
 		if (!m_isOpen)
 			return (-1);
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_WHITEBALANCEB, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCEB, &value, &automode);
 		return value;
 	}
 	void OvrvisionPro::SetCameraWhiteBalanceB(int value) {
@@ -571,7 +580,7 @@ namespace OVR
 		bool curval = GetCameraWhiteBalanceAuto();
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_WHITEBALANCEB, value, curval);
+		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCEB, value, curval);
 	}
 
 	int OvrvisionPro::GetCameraBLC(){
@@ -581,7 +590,7 @@ namespace OVR
 		if (!m_isOpen)
 			return (-1);
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_BLC, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_BLC, &value, &automode);
 		return value;
 	}
 	void OvrvisionPro::SetCameraBLC(int value){
@@ -595,7 +604,7 @@ namespace OVR
 			value = 1023;
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_BLC, value, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_BLC, value, false);
 	}
 
 	bool OvrvisionPro::GetCameraWhiteBalanceAuto(){
@@ -605,7 +614,7 @@ namespace OVR
 		if (!m_isOpen)
 			return false;
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_WHITEBALANCEB, &value, &automode);
+		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCEB, &value, &automode);
 		return automode;
 	}
 
@@ -616,7 +625,7 @@ namespace OVR
 		int curval = GetCameraWhiteBalanceB();
 
 		//set
-		m_pOV4L->SetCameraSetting(OV_CAMSET_WHITEBALANCEB, curval, value);
+		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCEB, curval, value);
 	}
 
 	//EEPROM
@@ -624,15 +633,15 @@ namespace OVR
 		if (!m_isOpen)
 			return;
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00007000, false);
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00006000, false);
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00007000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00007000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00006000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00007000, false);
 	}
 
 	void OvrvisionPro::UserDataAccessLock() {
 		if (!m_isOpen)
 			return;
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00000000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00000000, false);
 	}
 	void OvrvisionPro::UserDataAccessSelectAddress(unsigned int addr) {
 		if (!m_isOpen)
@@ -641,7 +650,7 @@ namespace OVR
 		addr &= 0x000001FF;
 		addr |= 0x00001000;	//cmd
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, addr, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, addr, false);
 	}
 	unsigned char OvrvisionPro::UserDataAccessGetData() {
 
@@ -651,7 +660,7 @@ namespace OVR
 		if (!m_isOpen)
 			return 0x00;
 
-		m_pOV4L->GetCameraSetting(OV_CAMSET_DATA, &value, &automode_none);
+		m_pDevice->GetCameraSetting(OV_CAMSET_DATA, &value, &automode_none);
 		return (unsigned char)value;
 	}
 	void OvrvisionPro::UserDataAccessSetData(unsigned char value){
@@ -661,21 +670,21 @@ namespace OVR
 		int value_int = (int)value;
 		value_int |= 0x00002000;	//cmd
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, value_int, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, value_int, false);
 
 	}
 	void OvrvisionPro::UserDataAccessSave(){
 		if (!m_isOpen)
 			return;
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00003000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00003000, false);
 	}
 
 	void OvrvisionPro::UserDataAccessCheckSumAddress(){
 		if (!m_isOpen)
 			return;
 
-		m_pOV4L->SetCameraSetting(OV_CAMSET_DATA, 0x00005000, false);
+		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00005000, false);
 	}
 
 	bool OvrvisionPro::CameraParamSaveEEPROM(){
@@ -693,9 +702,12 @@ namespace OVR
 
 		//Write
 		rt = ovrset.WriteEEPROM(WRITE_EEPROM_FLAG_CAMERASETWR);
-
 		//50ms wait
+#ifdef WIN32
+		Sleep(50);
+#else
 		usleep(50000);
+#endif // WIN32
 		return rt;
 	}
 
@@ -707,7 +719,11 @@ namespace OVR
 		rt = ovrset.ResetEEPROM();
 
 		//50ms wait
+#ifdef WIN32
+		Sleep(50);
+#else
 		usleep(50000);
+#endif // WIN32
 		return rt;
 	}
 };

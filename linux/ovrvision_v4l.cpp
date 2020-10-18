@@ -62,7 +62,7 @@ namespace OVR
 	{
 	}
 
-	int OvrvisionVideo4Linux::OpenDevice(int width, int height, int frame_rate)
+	int OvrvisionVideo4Linux::OpenDevice(int width, int height, int fps, int id)
 	{
 		if (SearchDevice(OVRVISIONPRO) != 0)
 			return -1;

@@ -60,7 +60,7 @@ public:
 
 	//Control method
 	// Create device
-	int OpenDevice(int cam_w, int cam_h, int rate, int skip);
+	int OpenDevice(int cam_w, int cam_h, int rate, int id = 0);
 
 	//Delete device
 	int CloseDevice();

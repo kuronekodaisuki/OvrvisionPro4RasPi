@@ -13,10 +13,10 @@ int main(int argc, char *argv[])
 {
 	Mat image(HEIGHT, WIDTH, CV_16UC1);
 	OvrvisionDirectShow device;
-	device.OpenDevice(WIDTH, HEIGHT, 30, 0);
+	device.OpenDevice(WIDTH, HEIGHT, 30);
 	//device.QueryCapability();
 	//device.EnumFormats();
-	//device.StartTransfer();
+	device.StartTransfer();
 	for (bool loop = true; loop;)
 	{
 		if (0 == device.GetBayer16Image(image.data))

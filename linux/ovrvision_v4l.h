@@ -53,7 +53,7 @@ namespace OVR
 		~OvrvisionVideo4Linux();
 
 		//Open device
-		int OpenDevice(int width, int height, int frame_rate);
+		int OpenDevice(int width, int height, int fps, int id = 0);
 
 		//Delete device
 		int CloseDevice();

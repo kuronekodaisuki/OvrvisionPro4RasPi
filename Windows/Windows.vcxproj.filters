@@ -29,10 +29,10 @@
     <ClInclude Include="..\src\ovrvision_setting.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ovrvision_device.h">
+    <ClInclude Include="ovrvision_ds.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
-    <ClInclude Include="ovrvision_ds.h">
+    <ClInclude Include="..\src\ovrvision_device.h">
       <Filter>ヘッダー ファイル</Filter>
     </ClInclude>
   </ItemGroup>

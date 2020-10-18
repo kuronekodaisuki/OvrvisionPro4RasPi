@@ -35,7 +35,7 @@
 #define CL_TARGET_OPENCL_VERSION 120
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS // We use OpenCL 1.2 functions
 
-#ifdef WIN32
+#if defined(WIN32)
 #include <windows.h>
 #include <dxgi.h>
 #include <d3d11.h>
@@ -45,9 +45,15 @@
 #include <CL/cl_d3d11.h>		// for OpenCL and Direct3D11 interoperability (KHR)
 #include <CL/cl_d3d11_nvidia.h>	// for OpenCL and Direct3D11 interoperability (NV)
 typedef void *TEXTURE;
-#endif
-
-#ifdef MACOSX
+#elif defined(LINUX)
+#include <CL/cl.h>	// OpenCL and its extensions
+#include <CL/cl_ext.h>
+#include <CL/cl_gl.h>       // OpenCL/OpenGL interoperabillity
+#include <CL/cl_gl_ext.h>   // OpenCL/OpenGL interoperabillity
+#include <GL/gl.h>
+#include <GL/glx.h>
+typedef unsigned int TEXTURE;
+#elif defined(MACOSX)
 // OpenCL header
 #include <OpenCL/cl.h>	// OpenCL and its extensions
 #include <OpenCL/cl_ext.h>
@@ -61,15 +67,8 @@ typedef void *TEXTURE;
 typedef unsigned int TEXTURE;
 #endif
 
-#ifdef LINUX
-#include <CL/cl.h>	// OpenCL and its extensions
-#include <CL/cl_ext.h>
-#include <CL/cl_gl.h>       // OpenCL/OpenGL interoperabillity
-#include <CL/cl_gl_ext.h>   // OpenCL/OpenGL interoperabillity
-#include <GL/gl.h>
-#include <GL/glx.h>
-typedef unsigned int TEXTURE;
-#endif
+
+
 
 //ovrvision setting
 #include "ovrvision_setting.h"
@@ -133,7 +132,7 @@ namespace OVR
                 @param mode of sharing with D3D11 or OpenGL 
                 @param pDevice for D3D11 
                 @param pVendorID for requesting GPU from given vendor*/
-			OvrvisionProOpenCL(int width, int height, enum SHARING_MODE mode = NONE, void *pDevice = NULL, const char *platform = NULL);
+			OvrvisionProOpenCL(int width, int height, enum SHARING_MODE mode = SHARING_MODE::NONE, void *pDevice = NULL, const char *platform = NULL);
 			~OvrvisionProOpenCL();
 
 			/*! @brief release resources */
@@ -300,7 +299,7 @@ namespace OVR
 			@param src image
 			@param dst image
 			@param filter */
-			void ConvertHSV(cl_mem src, cl_mem dst, enum FILTER filter = RAW, cl_event *execute = NULL);
+			void ConvertHSV(cl_mem src, cl_mem dst, enum FILTER filter = FILTER::RAW, cl_event *execute = NULL);
 
 			bool CreateProgram();
 			bool Prepare4Sharing();		// Prepare for OpenGL/D3D sharing

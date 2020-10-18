@@ -25,6 +25,8 @@
 #include <math.h>
 #include <string.h>
 
+#include "OvrvisionProCL.h"	//!OpenCL Engine
+
 #ifdef _OVRVISION_EXPORTS	//in ovrvision
 #if defined(WIN32)
 #include "ovrvision_ds.h"	//!DirectShow
@@ -33,7 +35,6 @@
 #elif defined(LINUX)
 #include "ovrvision_v4l.h"	//!Video4Linux
 #endif
-#include "OvrvisionProCL.h"	//!OpenCL Engine
 #else
 //USB cameras driver
 #ifdef WIN32
@@ -395,11 +396,11 @@ public:
 private:
 #ifdef WIN32
 	//DirectShow
-	OvrvisionDirectShow*	m_pODS;
+	OvrvisionDirectShow*	m_pDevice;
 #elif defined(MACOSX)
-	OvrvisionAVFoundation*  m_pOAV;
+	OvrvisionAVFoundation*  m_pDevice;
 #elif defined(LINUX)
-	OvrvisionVideo4Linux*	m_pOV4L;
+	OvrvisionVideo4Linux*	m_pDevice;
 #endif
 
 	//OpenCL Ovrvision System
