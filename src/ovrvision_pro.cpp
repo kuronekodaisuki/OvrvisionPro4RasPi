@@ -21,8 +21,11 @@
 #include "ovrvision_setting.h"
 #include "OvrvisionProCL.h"
 
-#ifdef WIN32
+#if defined(WIN32)
 #include "../Windows/ovrvision_ds.h"
+#elif defined(LINUX)
+#include "../Windows/ovrvision_v4l.h"
+#elif defined(MACOSX)
 #endif // WIN32
 
 /////////// VARS AND DEFS ///////////
@@ -45,16 +48,15 @@
 //Group
 namespace OVR
 {
-
 	//Constructor/Destructor
 	OvrvisionPro::OvrvisionPro()
 	{
 	#if defined(WIN32)
 		m_pDevice = new OvrvisionDirectShow();
-	#elif defined(MACOSX)
-		m_pDevice = [[OvrvisionAVFoundation alloc] init];
 	#elif defined(LINUX)
 		m_pDevice = new OvrvisionVideo4Linux();
+	#elif defined(MACOSX)
+		m_pDevice = [[OvrvisionAVFoundation alloc] init];
 	#endif
 
 		m_pFrame = NULL;
@@ -79,10 +81,10 @@ namespace OVR
 
 	#if defined(WIN32)
 		delete m_pDevice;
-	#elif defined(MACOSX)
-		[m_pDevice dealloc];
 	#elif defined(LINUX)
 		delete m_pDevice;
+	#elif defined(MACOSX)
+		[m_pDevice dealloc];
 	#endif
 	}
 
@@ -246,24 +248,6 @@ namespace OVR
 		m_isOpen = false;
 	}
 
-	// Create textures(OpenGL)
-	void OvrvisionPro::CreateSkinTextures(int width, int height, unsigned int left, unsigned int right)
-	{
-		m_pOpenCL->CreateSkinTextures(width, height, (TEXTURE)left, (TEXTURE)right);
-	}
-		
-	// Update textures(OpenGL)
-	void OvrvisionPro::UpdateSkinTextures(unsigned int left, unsigned int right)
-	{
-		m_pOpenCL->UpdateSkinTextures((TEXTURE)left, (TEXTURE)right);
-	}
-
-	// Update scaled image texture
-	void OvrvisionPro::UpdateImageTextures(unsigned int left, unsigned int right)
-	{
-		m_pOpenCL->UpdateImageTextures((TEXTURE)left, (TEXTURE)right);
-	}
-
 	// Capture frame
 	void OvrvisionPro::Capture(OVR::Camqt qt)
 	{
@@ -414,6 +398,7 @@ namespace OVR
 
 		return value;
 	}
+
 	void OvrvisionPro::SetCameraExposure(int value){
 		if (!m_isOpen)
 			return;
@@ -429,6 +414,7 @@ namespace OVR
 
 		m_pDevice->SetCameraSetting(OV_CAMSET_EXPOSURE, value, false);
 	}
+	
 	bool OvrvisionPro::SetCameraExposurePerSec(float fps){
 		if (!m_isOpen)
 			return false;
@@ -521,6 +507,7 @@ namespace OVR
 		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCER, &value, &automode);
 		return value;
 	}
+
 	void OvrvisionPro::SetCameraWhiteBalanceR(int value){
 		if (!m_isOpen)
 			return;
@@ -534,6 +521,7 @@ namespace OVR
 		//set
 		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCER, value, false);
 	}
+
 	int OvrvisionPro::GetCameraWhiteBalanceG(){
 		int value = 0;
 		bool automode = false;
@@ -544,6 +532,7 @@ namespace OVR
 		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCEG, &value, &automode);
 		return value;
 	}
+	
 	void OvrvisionPro::SetCameraWhiteBalanceG(int value){
 		if (!m_isOpen)
 			return;
@@ -557,6 +546,7 @@ namespace OVR
 		//set
 		m_pDevice->SetCameraSetting(OV_CAMSET_WHITEBALANCEG, value, false);
 	}
+	
 	int OvrvisionPro::GetCameraWhiteBalanceB(){
 		int value = 0;
 		bool automode = false;
@@ -567,6 +557,7 @@ namespace OVR
 		m_pDevice->GetCameraSetting(OV_CAMSET_WHITEBALANCEB, &value, &automode);
 		return value;
 	}
+	
 	void OvrvisionPro::SetCameraWhiteBalanceB(int value) {
 		if (!m_isOpen)
 			return;
@@ -593,6 +584,7 @@ namespace OVR
 		m_pDevice->GetCameraSetting(OV_CAMSET_BLC, &value, &automode);
 		return value;
 	}
+	
 	void OvrvisionPro::SetCameraBLC(int value){
 		if (!m_isOpen)
 			return;
@@ -643,6 +635,7 @@ namespace OVR
 			return;
 		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, 0x00000000, false);
 	}
+	
 	void OvrvisionPro::UserDataAccessSelectAddress(unsigned int addr) {
 		if (!m_isOpen)
 			return;
@@ -652,6 +645,7 @@ namespace OVR
 
 		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, addr, false);
 	}
+	
 	unsigned char OvrvisionPro::UserDataAccessGetData() {
 
 		int value = 0;
@@ -663,6 +657,7 @@ namespace OVR
 		m_pDevice->GetCameraSetting(OV_CAMSET_DATA, &value, &automode_none);
 		return (unsigned char)value;
 	}
+	
 	void OvrvisionPro::UserDataAccessSetData(unsigned char value){
 		if (!m_isOpen)
 			return;
@@ -673,6 +668,7 @@ namespace OVR
 		m_pDevice->SetCameraSetting(OV_CAMSET_DATA, value_int, false);
 
 	}
+	
 	void OvrvisionPro::UserDataAccessSave(){
 		if (!m_isOpen)
 			return;
@@ -726,4 +722,26 @@ namespace OVR
 #endif // WIN32
 		return rt;
 	}
+
+#ifdef ENABLE_HAND_CAPTURE
+	// Create textures(OpenGL)
+	void OvrvisionPro::CreateSkinTextures(int width, int height, unsigned int left, unsigned int right)
+	{
+		m_pOpenCL->CreateSkinTextures(width, height, (TEXTURE)left, (TEXTURE)right);
+	}
+
+	// Update textures(OpenGL)
+	void OvrvisionPro::UpdateSkinTextures(unsigned int left, unsigned int right)
+	{
+		m_pOpenCL->UpdateSkinTextures((TEXTURE)left, (TEXTURE)right);
+	}
+
+	// Update scaled image texture
+	void OvrvisionPro::UpdateImageTextures(unsigned int left, unsigned int right)
+	{
+		m_pOpenCL->UpdateImageTextures((TEXTURE)left, (TEXTURE)right);
+	}
+#endif // ENABLE_HAND_CAPTURE
+
+
 };

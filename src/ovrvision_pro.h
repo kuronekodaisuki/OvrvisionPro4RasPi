@@ -248,18 +248,21 @@ public:
 		@param value True is sync mode. */
 	void SetCameraSyncMode(bool value);
 
-	/*!	@brief Get OpenCL extensions of GPU */
-	int OpenCLExtensions(int(*callback)(void *, const char *), void *item);
+	/*!	@brief Capture frame and hold it in GPU for image processing(Grayscale, Skin color extraction etc.)
+	@param qt Set an image processing method. */
+	void Capture(OVR::Camqt qt);
 
-	// Grayscale image
-	/*!	@brief Grayscaled image of 1/2 scaled */
-	void Grayscale(unsigned char *left, unsigned char *right);		// 1/1 scaled
-	/*!	@brief Grayscaled image of 1/2 scaled */
-	void GrayscaleHalf(unsigned char *left, unsigned char *right);		// 1/2 scaled
-	/*!	@brief Grayscaled image of 1/4 scaled */
-	void GrayscaleFourth(unsigned char *left, unsigned char *right);	// 1/4 scaled
-	/*!	@brief Grayscaled image of 1/8 scaled */
-	void GrayscaleEighth(unsigned char *left, unsigned char *right);	// 1/8 scaled
+#ifdef  WIN32
+	void UpdateImageTextures(void* left, void* right);
+#else
+	void UpdateImageTextures(unsigned int left, unsigned int right);
+#endif
+	void InspectTextures(unsigned char *left, unsigned char *right, unsigned int type = 0);
+
+	/*! @brief Check GPU specification
+		@return true if satisfaied for OrvisionPro */
+	static bool CheckGPU();
+
 
 	//Parameter EEPROM (Don't touch)
 	void UserDataAccessUnlock();
@@ -273,7 +276,21 @@ public:
 	bool CameraParamSaveEEPROM();
 	bool CameraParamResetEEPROM();
 
-	// GPU texture
+#ifdef ENABLE_HAND_CAPTURE
+	/*!	@brief Get OpenCL extensions of GPU */
+	int OpenCLExtensions(int(*callback)(void *, const char *), void *item);
+
+	// Grayscale image
+	/*!	@brief Grayscaled image of 1/2 scaled */
+	void Grayscale(unsigned char *left, unsigned char *right);		// 1/1 scaled
+	/*!	@brief Grayscaled image of 1/2 scaled */
+	void GrayscaleHalf(unsigned char *left, unsigned char *right);		// 1/2 scaled
+	/*!	@brief Grayscaled image of 1/4 scaled */
+	void GrayscaleFourth(unsigned char *left, unsigned char *right);	// 1/4 scaled
+	/*!	@brief Grayscaled image of 1/8 scaled */
+	void GrayscaleEighth(unsigned char *left, unsigned char *right);	// 1/8 scaled
+
+																		// GPU texture
 	/*! @brief Create Skin textures
 		@param width of texture
 		@param height of texture
@@ -310,10 +327,6 @@ public:
 	void CreateSkinTextures(int width, int height, void* left, void* right); // for D3D11
 #endif
     
-	/*!	@brief Capture frame and hold it in GPU for image processing(Grayscale, Skin color extraction etc.)
-		@param qt Set an image processing method. */
-	void Capture(OVR::Camqt qt);
-
 	/*! @brief Update skin textures
 		@param n count of onjects
 		@param textureObjects 
@@ -326,10 +339,8 @@ public:
 		/////////////////////////////////////////////////////////////////////////////////////
 	*/
 	void UpdateSkinTextures(unsigned int left, unsigned int right);
-	void UpdateImageTextures(unsigned int left, unsigned int right);
 #ifdef  WIN32
 	void UpdateSkinTextures(void* left, void* right);   // for D3D11
-	void UpdateImageTextures(void* left, void* right);
 #endif
 
     
@@ -386,12 +397,7 @@ public:
 
 	/*! @brief UNDER CONSTRUCTION */
 	void GetStereoImageHSV(unsigned char* pLeft, unsigned char* pRight);
-
-	void InspectTextures(unsigned char *left, unsigned char *right, unsigned int type = 0);
-
-	/*! @brief Check GPU specification 
-		@return true if satisfaied for OrvisionPro */
-	static bool CheckGPU();
+#endif // ENABLE_HAND_CAPTURE
 
 private:
 #ifdef WIN32

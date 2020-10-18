@@ -67,9 +67,6 @@ typedef unsigned int TEXTURE;
 typedef unsigned int TEXTURE;
 #endif
 
-
-
-
 //ovrvision setting
 #include "ovrvision_setting.h"
 
