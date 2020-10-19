@@ -24,7 +24,7 @@
 #include <string.h>
 
 //Marker 
-#include <opencv2/opencv.hpp>
+#include <opencv2/core.hpp>
 typedef cv::Mat ovMat;
 
 //OVR Group

@@ -27,26 +27,14 @@
 
 #include "OvrvisionProCL.h"	//!OpenCL Engine
 
-#ifdef _OVRVISION_EXPORTS	//in ovrvision
 #if defined(WIN32)
-#include "ovrvision_ds.h"	//!DirectShow
+#include "../Windows/ovrvision_ds.h"	//!DirectShow
 #elif defined(MACOSX)
 #include "ovrvision_avf.h"	//!AVFoundation
 #elif defined(LINUX)
-#include "ovrvision_v4l.h"	//!Video4Linux
+#include "../linux/ovrvision_v4l.h"	//!Video4Linux
 #endif
-#else
-//USB cameras driver
-#ifdef WIN32
-class OvrvisionDirectShow;
-#elif defined(MACOSX)
-#define OvrvisionAVFoundation   void
-#elif defined(LINUX)
-class OvrvisionVideo4Linux;
-#endif
-//opencl class
-class OvrvisionProOpenCL;
-#endif /*_OVRVISION_EXPORTS*/
+
 
 //! OvrvisionSDK Group
 namespace OVR {

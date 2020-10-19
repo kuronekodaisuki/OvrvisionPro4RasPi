@@ -16,15 +16,14 @@
 /////////// INCLUDE ///////////
 
 #include "ovrvision_pro.h"
-#include <opencv2/opencv.hpp>
 
 #include "ovrvision_setting.h"
-#include "OvrvisionProCL.h"
+//#include "OvrvisionProCL.h"
 
 #if defined(WIN32)
 #include "../Windows/ovrvision_ds.h"
 #elif defined(LINUX)
-#include "../Windows/ovrvision_v4l.h"
+#include "../linux/ovrvision_v4l.h"
 #elif defined(MACOSX)
 #endif // WIN32
 
