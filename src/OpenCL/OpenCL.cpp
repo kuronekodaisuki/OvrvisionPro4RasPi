@@ -338,8 +338,9 @@ namespace OVR
 	//namespace OPENCL
 	//{
 #pragma region CONSTRUCTOR_DESTRUCTOR
+#pragma warning(disable:4996)
 		// Constructor
-	OvrvisionProOpenCL::OvrvisionProOpenCL(int width, int height, enum SHARING_MODE mode, void *pDevice, const char *platform)
+		OvrvisionProOpenCL::OvrvisionProOpenCL(int width, int height, enum SHARING_MODE mode, void *pDevice, const char *platform)
 		{
 			_width = width;
 			_height = height;
@@ -1220,8 +1221,8 @@ namespace OVR
 	// Inspact textures
 	void OvrvisionProOpenCL::InspectTextures(uchar* left, uchar *right, uint type)
 	{
-		uint width = _scaledRegion[0];
-		uint height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		cl_int status;
 		cl_event event[2];
 		size_t origin[3] = { 0, 0, 0 };
@@ -1545,8 +1546,8 @@ namespace OVR
 	//
 	void OvrvisionProOpenCL::SkinImages(uchar *left, uchar *right)
 	{
-		uint width = _scaledRegion[0];
-		uint height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		size_t origin[3] = { 0, 0, 0 };
 		cl_event event_l, event_r, event[2];
 
@@ -1584,8 +1585,8 @@ namespace OVR
 	bool OvrvisionProOpenCL::EnumHS(Mat &result_l, Mat &result_r)
 	{
 		bool detect = false;
-		uint width = _scaledRegion[0];
-		uint height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		Mat separate[2][4];
 		Mat bilevel[2], work[2];
 		Mat HSV[2];
@@ -1783,8 +1784,8 @@ namespace OVR
 		clReleaseEvent(event[1]);
 
 		// Skin color calibration
-		uint width = _scaledRegion[0];
-		uint height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		Mat _left(height, width, CV_8UC4, left);
 		Mat _right(height, width, CV_8UC4, right);
 
@@ -1837,7 +1838,8 @@ namespace OVR
 	//
 	void OvrvisionProOpenCL::SkinRegion(cl_mem left, cl_mem right, cl_event *event_l, cl_event *event_r)
 	{
-		uint width = _scaledRegion[0], height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		size_t origin[3] = { 0, 0, 0 };
 		size_t region[3] = { width, height, 1 };
 		size_t size[] = { width, height };
@@ -1881,7 +1883,8 @@ namespace OVR
 	void OvrvisionProOpenCL::SkinRegion(uchar *left, uchar *right)
 	{
 		cl_mem l, r;
-		uint width = _scaledRegion[0], height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		size_t origin[3] = { 0, 0, 0 };
 		size_t region[3] = { width, height, 1 };
 
@@ -2253,7 +2256,8 @@ namespace OVR
 	// Get HSV images
 	void OvrvisionProOpenCL::GetHSV(uchar *left, uchar *right)
 	{
-		uint width = _scaledRegion[0], height = _scaledRegion[1];
+		size_t width = _scaledRegion[0];
+		size_t height = _scaledRegion[1];
 		size_t origin[3] = { 0, 0, 0 };
 		size_t region[3] = { width, height, 1 };
 

@@ -16,9 +16,7 @@
 /////////// INCLUDE ///////////
 
 #include "ovrvision_pro.h"
-
 #include "ovrvision_setting.h"
-//#include "OvrvisionProCL.h"
 
 #if defined(WIN32)
 #include "../Windows/ovrvision_ds.h"

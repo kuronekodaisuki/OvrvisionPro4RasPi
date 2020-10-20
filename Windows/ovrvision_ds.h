@@ -20,7 +20,7 @@
 
 /////////// INCLUDE ///////////
 
-#include <windows.h>
+//#include <windows.h>
 #include <dshow.h>
 
 #include <stdlib.h>
@@ -38,7 +38,7 @@
 #include <qedit.h>
 
 //for threading
-#include <process.h>
+//#include <process.h>
 
 #include "../src/ovrvision_device.h"
 

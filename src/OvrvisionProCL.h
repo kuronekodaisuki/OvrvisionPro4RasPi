@@ -16,18 +16,9 @@
 // from a DLL simpler. All files within this DLL are compiled with the OVRVISIONPRODLL_EXPORTS
 // symbol defined on the command line. This symbol should not be defined on any project
 // that uses this DLL. This way any other project whose source files include this file see 
-// OVRVISIONPRODLL_API functions as being imported from a DLL, whereas this DLL sees symbols
+//  functions as being imported from a DLL, whereas this DLL sees symbols
 // defined with this macro as being exported.
 
-#ifdef WIN32
-#ifdef _OVRVISION_EXPORTS
-#define OVRVISIONPRODLL_API __declspec(dllexport)
-#else
-#define OVRVISIONPRODLL_API __declspec(dllimport)
-#endif
-#else
-#define OVRVISIONPRODLL_API
-#endif
 
 
 #include <opencv2/core/core.hpp>
@@ -36,7 +27,7 @@
 #define CL_USE_DEPRECATED_OPENCL_1_2_APIS // We use OpenCL 1.2 functions
 
 #if defined(WIN32)
-#include <windows.h>
+//#include <windows.h>
 #include <dxgi.h>
 #include <d3d11.h>
 #include <GL/gl.h> 
@@ -122,7 +113,8 @@ namespace OVR
 	typedef int(*EXTENSION_CALLBACK)(void *pItem, const char *extensions);
 
 	// OpenCL version
-	class OVRVISIONPRODLL_API OvrvisionProOpenCL {
+	class  OvrvisionProOpenCL 
+	{
 	public:
 		/*! @brief Constructor 
                		@param width of image
@@ -397,6 +389,6 @@ namespace OVR
 	const int majorVersion,
 	const int minorVersion);
 
-	OVRVISIONPRODLL_API int EnumerateGPU(PENUMDEVICE callback = NULL, void *pItem = NULL);
+	 int EnumerateGPU(PENUMDEVICE callback = NULL, void *pItem = NULL);
 	*/
 }

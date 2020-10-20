@@ -26,7 +26,6 @@
 //Group
 namespace OVR
 {
-
 	/////////// CLASS ///////////
 
 	//Ovrvision Setting Class

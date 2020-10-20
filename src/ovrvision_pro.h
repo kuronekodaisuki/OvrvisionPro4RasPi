@@ -18,7 +18,6 @@
 
 /////////// INCLUDE ///////////
 
-#define LINUX
 //Common header
 #include <stdlib.h>
 #include <stdio.h>
