@@ -109,7 +109,7 @@ typedef unsigned char* pbyte;
 /////////// CLASS ///////////
 
 //! OvrvisionPro class
-class OVRPORT OvrvisionPro
+class OvrvisionPro
 {
 public:
 	//!Constructor
