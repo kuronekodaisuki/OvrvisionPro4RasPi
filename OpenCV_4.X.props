@@ -2,7 +2,7 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <OPENCV_DIR>C:\OpenCV\4.5.0\build\install</OPENCV_DIR>
+    <OPENCV_DIR>C:\OpenCV\4.5.0\build</OPENCV_DIR>
     <MKL_DIR>C:\Program Files (x86)\IntelSWTools\parallel_studio_xe_2017.4.051\compilers_and_libraries_2017\windows\mkl</MKL_DIR>
   </PropertyGroup>
   <!-- Debug|x64 -->
