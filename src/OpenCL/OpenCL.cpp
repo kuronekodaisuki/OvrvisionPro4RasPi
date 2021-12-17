@@ -1346,7 +1346,7 @@ namespace OVR
 		*/
 		if (_vendorD3D11 == NVIDIA)
 		{
-			return false;// pclCreateFromD3D11Texture2DNV(_context, CL_MEM_WRITE_ONLY, texture, 0, &_errorCode);
+			return pclCreateFromD3D11Texture2DNV(_context, CL_MEM_WRITE_ONLY, texture, 0, &_errorCode);
 		}
 		else
 		{
